@@ -1,10 +1,13 @@
 import { firestore, auth, increment } from "../lib/firebase";
 import { useDocument } from "react-firebase-hooks/firestore";
+import { useContext } from "react";
+import { UserContext } from "../lib/context";
 
 // Allows user to heart or like a post
 export default function Heart({ post }) {
-  // Listen to heart document for currently logged in user
+  const { username } = useContext(UserContext);
 
+  // Listen to heart document for currently logged in user
   const postRef = firestore
     .collection("users")
     .doc(post.uid)
@@ -34,14 +37,19 @@ export default function Heart({ post }) {
     await batch.commit();
   };
 
+  const handleHeartClick = () => {
+    if (!username) return;
+    heartDoc?.exists ? removeHeart() : addHeart();
+  };
+
   return (
     <button
-      onClick={heartDoc?.exists ? removeHeart : addHeart}
-      className="text-primary-500"
+      onClick={handleHeartClick}
+      className="text-primary-500 text-4xl h-8 w-8 disabled:opacity-25"
+      disabled={!username}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6"
         fill={heartDoc?.exists ? "currentColor" : "none"}
         viewBox="0 0 24 24"
         stroke="currentColor"
