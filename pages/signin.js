@@ -14,8 +14,8 @@ export default function Home(props) {
   }, [user, username]);
 
   return (
-    <div className="h-screen bg-primary-500">
-      <div className="flex flex-col h-full box">
+    <div className="h-screen bg-primary-500 min-w-fit">
+      <div className="flex flex-col h-full ">
         <div className="flex-initial p-4">
           <Image src="/Feed_Logo.svg" alt="Logo" width="100%" height="100%" />
         </div>
@@ -68,11 +68,11 @@ function SignInForm() {
   };
 
   return (
-    <div className="mx-auto w-max text-center text-bone-500 ">
-      <div className="text-7xl font-extrabold">
+    <div className="mx-auto w-max text-center text-bone-500 p-4">
+      <div className="text-3xl md:text-5xl lg:text-7xl font-extrabold">
         Put your thoughts to the test
       </div>
-      <div className="text-lg font-medium mt-4">
+      <div className="md:text-lg font-medium  lg:mt-4 ">
         Post today. Come back tomorrow and see how it did.
       </div>
       <div className="mt-16">
@@ -160,7 +160,7 @@ function UsernameForm() {
   );
 
   return (
-    <div className="w-max mx-auto">
+    <div className="w-11/12 sm:3/4 md:w-1/2 max-w-[600px] mx-auto">
       <form onSubmit={onSubmit}>
         <div className="text-primary-300 font-medium">Choose a username</div>
         <div>

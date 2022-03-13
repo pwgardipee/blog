@@ -7,4 +7,9 @@
 html,
 body {
   font-family: "Sarabun", sans-serif;
+  background-color: #202020;
+}
+
+.background-gradient {
+  background: linear-gradient(180deg, #b280e3 0%, rgba(32, 32, 32, 0) 100%);
 }
