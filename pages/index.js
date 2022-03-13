@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 import { useState, useContext } from "react";
 
 // Max post to query per page
-const LIMIT = 1;
+const LIMIT = 20;
 
 export async function getServerSideProps(context) {
   const postsQuery = firestore
@@ -75,21 +75,44 @@ export default function Home(props) {
   };
 
   return (
-    <div className="h-screen ">
+    <div className="h-screen">
       <div className="flex flex-col h-full ">
-        <div className="flex-initial  border-b border-grey-50 grid justify-items-center">
-          <Image
-            src="/Feed_Logo.svg"
-            alt="Logo"
-            width="100%"
-            height="100%"
-            className="mx-auto"
-          />
+        <div className="flex-initial border-b border-gray-700 grid  grid-cols-2 md:grid-cols-1 md:justify-items-center px-12">
+          <div className="">
+            <Image
+              src="/Feed_Logo.svg"
+              alt="Logo"
+              width="100%"
+              height="100%"
+              className="mx-auto"
+            />
+          </div>
+          <div className="md:hidden w-full grid justify-items-end items-center">
+            {username ? (
+              <div className="w-16 h-16">
+                <Image
+                  src={user?.photoURL}
+                  alt={username}
+                  width="100%"
+                  height="100%"
+                  className="rounded-full"
+                  onClick={() => router.push("/profile")}
+                />
+              </div>
+            ) : (
+              <button
+                onClick={() => router.push("/signin")}
+                className="font-bold text-primary-500"
+              >
+                Sign In
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex-auto h-full overflow-hidden ">
-          <div className="h-full grid grid-cols-[1fr,4fr]">
+          <div className="h-full md:grid grid-cols-[250px,auto]">
             {/* Left Panel */}
-            <div className="border-r border-grey-50 grid grid-cols-1 h-full p-4 justify-items-center text-center">
+            <div className="border-r border-gray-700 grid-cols-1 h-full p-4 justify-items-center text-center hidden md:grid">
               <div>
                 {user && user.photoURL && (
                   <div>
@@ -100,29 +123,42 @@ export default function Home(props) {
                       height="100%"
                       className="rounded-full"
                     />
-                    <div className="font-bold text-lg">{user.displayName}</div>
-                    <div className="font-semibold text-gray-300">
+                    <div className="font-bold text-lg text-bone-500">
+                      {user.displayName}
+                    </div>
+                    <div className="font-semibold text-primary-300">
                       @{username}
                     </div>
                   </div>
                 )}
               </div>
               <div className="self-end ">
-                <button
-                  onClick={signOut}
-                  className="font-bold text-primary-500"
-                >
-                  Sign Out
-                </button>
+                {username ? (
+                  <button
+                    onClick={signOut}
+                    className="font-bold text-primary-500"
+                  >
+                    Sign Out
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => router.push("/signin")}
+                    className="font-bold text-primary-500"
+                  >
+                    Sign In
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Right Panel */}
-            <div className="overflow-scroll will-change-scroll h-full py-8 px-36">
-              <div className="pb-16">
-                <NewPostCard />
+            <div className="overflow-scroll will-change-scroll h-full ">
+              <div className="py-8 mx-auto w-11/12 md:w-3/4">
+                <div className="mb-16">
+                  <NewPostCard />
+                </div>
+                <PostFeed posts={posts} />
               </div>
-              <PostFeed posts={posts} />
               {!loading && !postsEnd && (
                 <button onClick={getMorePosts}>Load more</button>
               )}
@@ -141,6 +177,7 @@ export default function Home(props) {
 function NewPostCard() {
   const [content, setContent] = useState("");
   const { username } = useContext(UserContext);
+  const [isValid, setIsValid] = useState(false);
 
   const createPost = async (e) => {
     e.preventDefault();
@@ -164,24 +201,32 @@ function NewPostCard() {
   };
 
   return (
-    <div className="p-4 drop-shadow-md bg-white rounded">
-      <div>Today&#39;s Post</div>
-      <textarea
-        id="comment"
-        name="comment"
-        rows={3}
-        className="shadow-sm block w-full  sm:text-sm border border-gray-200  focus:outline-none rounded-md p-1"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
-      <div className="grid grid-cols-2">
-        <div className="justify-self-start">12/140</div>
-        <div className="justify-self-end">
-          <button onClick={createPost} className="text-primary-500">
+    <div className="p-4 rounded-t-lg background-gradient">
+      <form onSubmit={createPost}>
+        <div className="grid grid-cols-[1fr,auto] gap-12 items-center ">
+          <textarea
+            name="username"
+            value={content}
+            onChange={(e) => {
+              const content = e.target.value;
+              setContent(content);
+              setIsValid(content && content.length);
+            }}
+            type="text"
+            className="block w-full bg-transparent focus:outline-none text-bone-500 placeholder:text-primary-300 resize-none text-3xl"
+            rows="3"
+            placeholder="Today's Post..."
+          />
+
+          <button
+            type="submit"
+            className="disabled:opacity-25 font-black text-lg text-bone-500 mt-1 text-right"
+            disabled={!isValid}
+          >
             Post
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
