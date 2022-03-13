@@ -16,11 +16,11 @@ function PostItem({ post }) {
       ? new Date(post.createdAt)
       : post.createdAt.toDate();
   return (
-    <div className="border-b border-gray-100 bg-white py-4">
+    <div className="border-b border-gray-700  py-4">
       <div className="grid grid-cols-[auto,100px] gap-8">
         <div>
-          <div className="text-xl break-all">{post.content}</div>
-          <div className="font-medium text-sm text-gray-300 mt-2">
+          <div className="text-xl break-all text-bone-500">{post.content}</div>
+          <div className="font-medium text-sm text-bone-900 mt-2">
             {moment(createdAt).fromNow()}
           </div>
         </div>
