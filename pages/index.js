@@ -12,7 +12,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 
 // Max post to query per page
 const LIMIT = 20;
@@ -35,6 +35,16 @@ export default function Home(props) {
   const [loading, setLoading] = useState(false);
   const { user, username } = useContext(UserContext);
   const router = useRouter();
+  const listInnerRef = useRef();
+
+  const onScroll = async () => {
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        await getMorePosts();
+      }
+    }
+  };
 
   const [postsEnd, setPostsEnd] = useState(false);
 
@@ -152,20 +162,23 @@ export default function Home(props) {
             </div>
 
             {/* Right Panel */}
-            <div className="overflow-scroll will-change-scroll h-full ">
+            <div
+              className="overflow-scroll will-change-scroll h-full "
+              onScroll={onScroll}
+              ref={listInnerRef}
+            >
               <div className="py-8 mx-auto w-11/12 md:w-3/4">
                 <div className="mb-16">
                   <NewPostCard />
                 </div>
                 <PostFeed posts={posts} />
               </div>
-              {!loading && !postsEnd && (
-                <button onClick={getMorePosts}>Load more</button>
+
+              {postsEnd && (
+                <div className="text-center mb-8 text-primary-500">
+                  You have reached the end!
+                </div>
               )}
-
-              <Loader show={loading} />
-
-              {postsEnd && "You have reached the end!"}
             </div>
           </div>
         </div>
